@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src="https://unpkg.com/react@15.3.2/dist/react.js"></script>
+    <script src="https://unpkg.com/react-dom@15.3.2/dist/react-dom.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.23/browser.min.js"></script>
+    <script src="https://npmcdn.com/react-router@2.4.0/umd/ReactRouter.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.5.1/css/bulma.min.css">
+    <title>To Do List Tutorial in React</title>
+
+<style>
+    html, body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 100px;
+        background-color: #66ccff
+    }
+    .input {
+        width: 500px;
+    }
+    .button {
+        margin-left: 11px;
+    }
+</style>
+
+</head>
+
+<body>
+  <div id='app'></div>
+
+  <script type="text/babel">
+  const home = document.querySelector('#app');
+
+  class ToDoList extends React.Component {
+    constructor(props) {
+      super(props)
+
+      this.state = {
+        tasks: [],
+        entry: ""
+      }
+      this.addItem = this.addItem.bind(this);
+      this.updateEntry = this.updateEntry.bind(this);
+    }
+
+    addItem(event) {
+      let newTasks = [];
+      newTasks.push(this.state.entry);
+
+      this.setState({
+        tasks: newTasks
+      });
+
+    }
+
+    updateEntry(event) {
+      this.setState({
+        entry: event.target.value
+      });
+    }
+
+    render() {
+      return (
+        <div>
+          <form onSubmit={this.addItem}>
+          <input type="text" className="input is-info" placeholder="Enter task..." value={this.state.entry} onChange={this.updateEntry}/>
+          <button type="submit" className="button is-info" onClick={this.addItem}>Add</button>
+          </form>
+          <div>
+            {this.state.tasks.map(item => 
+              <div>{item.tasks}</div>
+            )}  
+          </div>
+        </div>
+      )
+    }
+  }
+        
+  ReactDOM.render(
+    <ToDoList />,
+    home
+  );
+
+    </script>
+</body>
+</html>
