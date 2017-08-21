@@ -49,13 +49,13 @@
     }
 
     addItem(event) {
-      let newTasks = [];
-      newTasks.push(this.state.entry);
+      event.preventDefault()
 
       this.setState({
-        tasks: newTasks
+        tasks: [...this.state.tasks, this.state.entry],
+        entry: ""
       });
-
+      console.log(this.state.tasks);
     }
 
     updateEntry(event) {
