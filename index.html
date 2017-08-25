@@ -26,6 +26,10 @@
     .button {
         margin-left: 11px;
     }
+    .card {
+      margin: 5px;
+      padding: 5px;
+    }
 </style>
 
 </head>
@@ -35,6 +39,19 @@
 
   <script type="text/babel">
   const home = document.querySelector('#app');
+
+  class ToDoItem extends React.Component {
+    render() {
+      return(
+        <div className='card'>
+        <div className='card-title'>
+        <p className='title'>{this.props.task}</p>
+        <p className='subtitle'>{this.props.added}</p>
+        </div>
+        </div>
+      )
+    }
+  }
 
   class ToDoList extends React.Component {
     constructor(props) {
@@ -49,13 +66,21 @@
     }
 
     addItem(event) {
-      event.preventDefault()
+      let taskArray = this.state.tasks;
+
+      taskArray.push( {
+        text: this.state.entry,
+        key: Date.now()
+      })
 
       this.setState({
-        tasks: [...this.state.tasks, this.state.entry],
+        tasks: taskArray,
         entry: ""
+        // tasks: [...this.state.tasks, this.state.entry],
+        // entry: ""
       });
       console.log(this.state.tasks);
+      event.preventDefault()
     }
 
     updateEntry(event) {
@@ -73,7 +98,7 @@
           </form>
           <div>
             {this.state.tasks.map(item => 
-              <div>{item.tasks}</div>
+              <ToDoItem task={item.text} added={item.key}/>
             )}  
           </div>
         </div>
