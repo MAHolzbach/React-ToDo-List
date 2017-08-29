@@ -48,33 +48,42 @@
 
   <script type="text/babel">
   const home = document.querySelector("#app");
-class ToDoItem extends React.Component {
+  class ToDoItem extends React.Component {
   handleDelete = () => {
-    const { singleDelete, key, item } = this.props;
-    singleDelete(key, item);
+    const { singleDelete, index } = this.props;
+    singleDelete(index);
+  };
+  handleCompletion = e => {
+    this.props.markComplete(e.target.checked);
   };
   render() {
     return (
       <div className="card">
         <div className="card-title">
-          <input type="checkbox" />
+          <input
+            type="checkbox"
+            complete={this.props.complete}
+            onChange={this.handleCompletion}
+          />
           <p className="subtitle">{this.props.task}</p>
           <a className="delete" onClick={this.handleDelete} />
         </div>
       </div>
     );
   }
-};
+}
 class ToDoList extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       tasks: [],
-      entry: ""
+      entry: "",
+      complete: false
     };
     this.addItem = this.addItem.bind(this);
     this.updateEntry = this.updateEntry.bind(this);
     this.singleDelete = this.singleDelete.bind(this);
+    this.itsDone = this.itsDone.bind(this);
   }
   addItem(event) {
     let taskArray = this.state.tasks;
@@ -86,21 +95,24 @@ class ToDoList extends React.Component {
       tasks: taskArray,
       entry: ""
     });
-    console.log(this.state.tasks);
     event.preventDefault();
-  };
+  }
   updateEntry(event) {
     this.setState({
       entry: event.target.value
     });
-  };
-  singleDelete(index, item) {
+  }
+  singleDelete(index) {
     this.state.tasks.splice(index, 1);
     this.setState({
       tasks: this.state.tasks
     });
-    console.log(this.state.tasks);
-  };
+  }
+  itsDone(complete) {
+    this.setState({
+      complete: complete
+    })
+  }
   render() {
     return (
       <div className="todoList">
@@ -121,12 +133,13 @@ class ToDoList extends React.Component {
           </button>
         </form>
         <div>
-          {this.state.tasks.map(item =>
+          {this.state.tasks.map((item, index) =>
             <ToDoItem
               item={item}
+              index={index}
+              markComplete={this.itsDone}
               key={item.key}
               task={item.text}
-              added={item.key}
               singleDelete={this.singleDelete}
             />
           )}
@@ -137,6 +150,7 @@ class ToDoList extends React.Component {
 }
 
 ReactDOM.render(<ToDoList />, home);
+
 
 
   </script>
