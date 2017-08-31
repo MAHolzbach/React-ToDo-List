@@ -10,45 +10,58 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.23/browser.min.js"></script>
     <script src="https://npmcdn.com/react-router@2.4.0/umd/ReactRouter.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.5.1/css/bulma.min.css">
-    <title>To Do List Tutorial in React</title>
+    <title>To Do List in React</title>
 
 <style>
-    html, body {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 100px;
-      background-color: #66ccff
-    }
-    .input {
-      width: 500px;
-    }
-    .button {
-      margin-left: 11px;
-    }
-    .card {
-      background-color: #82cdff;
-      margin: 5px;
-      padding: 5px;
-      border: blue 1px solid;
-      color: black;
-      max-width: 490px;
-    }
-    .card-title {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
+ html {
+  height: 100%;
+  background-color: #66ccff;
+}
+.title {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+#app {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 100px;
+}
+.input {
+  width: 500px;
+}
+.button {
+  margin-left: 11px;
+}
+.card {
+  background-color: #82cdff;
+  margin: 5px;
+  padding: 5px;
+  border: blue 1px solid;
+  color: black;
+  max-width: 490px;
+}
+.card-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.struck {
+  text-decoration: line-through;
+}
+
 </style>
 
 </head>
 
 <body>
-  <div id='app'></div>
+<h1 class='title'>To Do List</h1>
+<div id='app'></div>
 
   <script type="text/babel">
   const home = document.querySelector("#app");
-  class ToDoItem extends React.Component {
+class ToDoItem extends React.Component {
   handleDelete = () => {
     const { singleDelete, index } = this.props;
     singleDelete(index);
@@ -65,7 +78,7 @@
             complete={this.props.complete}
             onChange={this.handleCompletion}
           />
-          <p className="subtitle">{this.props.task}</p>
+          <p className="subtitle" className={this.props.className}>{this.props.task}</p>
           <a className="delete" onClick={this.handleDelete} />
         </div>
       </div>
@@ -111,7 +124,8 @@ class ToDoList extends React.Component {
   itsDone(complete) {
     this.setState({
       complete: complete
-    })
+    });
+    console.log(this.state.complete);
   }
   render() {
     return (
@@ -141,6 +155,7 @@ class ToDoList extends React.Component {
               key={item.key}
               task={item.text}
               singleDelete={this.singleDelete}
+              className={this.state.complete ? "struck" : ""}
             />
           )}
         </div>
@@ -150,6 +165,7 @@ class ToDoList extends React.Component {
 }
 
 ReactDOM.render(<ToDoList />, home);
+
 
 
 
