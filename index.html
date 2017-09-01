@@ -13,7 +13,7 @@
     <title>To Do List in React</title>
 
 <style>
- html {
+html {
   height: 100%;
   background-color: #66ccff;
 }
@@ -35,6 +35,9 @@
   margin-left: 11px;
 }
 .card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   background-color: #82cdff;
   margin: 5px;
   padding: 5px;
@@ -42,13 +45,10 @@
   color: black;
   max-width: 490px;
 }
-.card-title {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
 .struck {
   text-decoration: line-through;
+}
+.unstruck {
 }
 
 </style>
@@ -59,28 +59,39 @@
 <h1 class='title'>To Do List</h1>
 <div id='app'></div>
 
-  <script type="text/babel">
-  const home = document.querySelector("#app");
+<script type="text/babel">
+const home = document.querySelector("#app");
 class ToDoItem extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      complete: false
+    };
+  }
   handleDelete = () => {
     const { singleDelete, index } = this.props;
     singleDelete(index);
   };
-  handleCompletion = e => {
-    this.props.markComplete(e.target.checked);
+  itsDone = () => {
+    this.setState(prevState => ({
+      complete: !prevState.complete
+    }));
+    console.log(this.state.complete);
   };
   render() {
     return (
       <div className="card">
+        <input
+          type="checkbox"
+          complete={this.state.complete}
+          onChange={this.itsDone}
+        />
         <div className="card-title">
-          <input
-            type="checkbox"
-            complete={this.props.complete}
-            onChange={this.handleCompletion}
-          />
-          <p className="subtitle" className={this.props.className}>{this.props.task}</p>
-          <a className="delete" onClick={this.handleDelete} />
+          <p className={this.state.complete ? "struck" : "unstruck"}>
+            {this.props.task}
+          </p>
         </div>
+        <a className="delete" onClick={this.handleDelete} />
       </div>
     );
   }
@@ -90,13 +101,11 @@ class ToDoList extends React.Component {
     super(props);
     this.state = {
       tasks: [],
-      entry: "",
-      complete: false
+      entry: ""
     };
     this.addItem = this.addItem.bind(this);
     this.updateEntry = this.updateEntry.bind(this);
     this.singleDelete = this.singleDelete.bind(this);
-    this.itsDone = this.itsDone.bind(this);
   }
   addItem(event) {
     let taskArray = this.state.tasks;
@@ -120,12 +129,6 @@ class ToDoList extends React.Component {
     this.setState({
       tasks: this.state.tasks
     });
-  }
-  itsDone(complete) {
-    this.setState({
-      complete: complete
-    });
-    console.log(this.state.complete);
   }
   render() {
     return (
@@ -151,11 +154,9 @@ class ToDoList extends React.Component {
             <ToDoItem
               item={item}
               index={index}
-              markComplete={this.itsDone}
               key={item.key}
               task={item.text}
               singleDelete={this.singleDelete}
-              className={this.state.complete ? "struck" : ""}
             />
           )}
         </div>
@@ -165,9 +166,6 @@ class ToDoList extends React.Component {
 }
 
 ReactDOM.render(<ToDoList />, home);
-
-
-
 
   </script>
 </body>
