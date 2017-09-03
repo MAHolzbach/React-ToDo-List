@@ -8,7 +8,6 @@
     <script src="https://unpkg.com/react@15.3.2/dist/react.js"></script>
     <script src="https://unpkg.com/react-dom@15.3.2/dist/react-dom.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.23/browser.min.js"></script>
-    <script src="https://npmcdn.com/react-router@2.4.0/umd/ReactRouter.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.5.1/css/bulma.min.css">
     <title>To Do List in React</title>
 
@@ -67,12 +66,14 @@ class ToDoItem extends React.Component {
     this.state = {
       complete: false
     };
+    this.handleDelete = this.handleDelete.bind(this);
+    this.itsDone = this.itsDone.bind(this);
   }
-  handleDelete = () => {
+  handleDelete() {
     const { singleDelete, index } = this.props;
     singleDelete(index);
   };
-  itsDone = () => {
+  itsDone() {
     this.setState(prevState => ({
       complete: !prevState.complete
     }));
@@ -96,6 +97,11 @@ class ToDoItem extends React.Component {
     );
   }
 }
+
+// class DeleteButton extends React.Component {
+
+// }
+
 class ToDoList extends React.Component {
   constructor(props) {
     super(props);
@@ -160,12 +166,21 @@ class ToDoList extends React.Component {
             />
           )}
         </div>
+      {/*<DeleteButton/>*/}
       </div>
     );
   }
 }
 
-ReactDOM.render(<ToDoList />, home);
+class App extends React.Component {
+  render() {
+    return (
+      <ToDoList />
+    )
+  }
+}
+
+ReactDOM.render(<App />, home);
 
   </script>
 </body>
