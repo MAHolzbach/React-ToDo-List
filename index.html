@@ -63,32 +63,27 @@ const home = document.querySelector("#app");
 class ToDoItem extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-      complete: false
-    };
     this.handleDelete = this.handleDelete.bind(this);
     this.itsDone = this.itsDone.bind(this);
   }
   handleDelete() {
     const { singleDelete, index } = this.props;
     singleDelete(index);
-  };
+  }
   itsDone() {
-    this.setState(prevState => ({
-      complete: !prevState.complete
-    }));
-    console.log(this.state.complete);
-  };
+    const { markItDone, prevState } = this.props;
+    markItDone(prevState);
+  }
   render() {
     return (
       <div className="card">
         <input
           type="checkbox"
-          complete={this.state.complete}
+          complete={this.props.complete}
           onChange={this.itsDone}
         />
         <div className="card-title">
-          <p className={this.state.complete ? "struck" : "unstruck"}>
+          <p className={this.props.complete ? "struck" : "unstruck"}>
             {this.props.task}
           </p>
         </div>
@@ -97,21 +92,20 @@ class ToDoItem extends React.Component {
     );
   }
 }
-
 // class DeleteButton extends React.Component {
-
 // }
-
 class ToDoList extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       tasks: [],
-      entry: ""
+      entry: "",
+      complete: false
     };
     this.addItem = this.addItem.bind(this);
     this.updateEntry = this.updateEntry.bind(this);
     this.singleDelete = this.singleDelete.bind(this);
+    this.markItDone = this.markItDone.bind(this);
   }
   addItem(event) {
     let taskArray = this.state.tasks;
@@ -135,6 +129,12 @@ class ToDoList extends React.Component {
     this.setState({
       tasks: this.state.tasks
     });
+  }
+  markItDone(prevState) {
+    this.setState(prevState => ({
+      complete: !prevState.complete
+    }));
+    console.log(this.state.complete);
   }
   render() {
     return (
@@ -163,24 +163,23 @@ class ToDoList extends React.Component {
               key={item.key}
               task={item.text}
               singleDelete={this.singleDelete}
+              prevState={item.complete}
+              markItDone={this.markItDone}
             />
           )}
         </div>
-      {/*<DeleteButton/>*/}
+        {/*<DeleteButton/>*/}
       </div>
     );
   }
 }
-
 class App extends React.Component {
   render() {
-    return (
-      <ToDoList />
-    )
+    return <ToDoList />;
   }
 }
-
 ReactDOM.render(<App />, home);
+
 
   </script>
 </body>
