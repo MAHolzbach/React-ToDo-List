@@ -71,19 +71,16 @@ class ToDoItem extends React.Component {
     singleDelete(index);
   }
   itsDone() {
-    const { markItDone, prevState } = this.props;
-    markItDone(prevState);
+    const { markItDone, completed } = this.props;
+    markItDone(completed);
+    console.log(completed);
   }
   render() {
     return (
       <div className="card">
-        <input
-          type="checkbox"
-          complete={this.props.complete}
-          onChange={this.itsDone}
-        />
+        <input type="checkbox" onChange={this.itsDone} />
         <div className="card-title">
-          <p className={this.props.complete ? "struck" : "unstruck"}>
+          <p className={this.props.completed ? "struck" : "unstruck"}>
             {this.props.task}
           </p>
         </div>
@@ -92,8 +89,28 @@ class ToDoItem extends React.Component {
     );
   }
 }
-// class DeleteButton extends React.Component {
-// }
+class DeleteButton extends React.Component {
+  constructor(props) {
+    super(props);
+    this.multiDelete = this.multiDelete.bind(this);
+  }
+  multiDelete() {
+    const { bigDelete, completed } = this.props;
+    console.log(completed);
+    bigDelete(completed);
+  }
+  render() {
+    return (
+      <button
+        type="submit"
+        className="button is-danger"
+        onClick={this.multiDelete}
+      >
+        Delete
+      </button>
+    );
+  }
+}
 class ToDoList extends React.Component {
   constructor(props) {
     super(props);
@@ -117,6 +134,7 @@ class ToDoList extends React.Component {
       tasks: taskArray,
       entry: ""
     });
+    console.log(this.state.complete); //TODO: state.complete needs to be lowered; all new items getting same state if one item is marked complete. But how to pass that state to DeleteButton component? This is why I raised it in the first place.
     event.preventDefault();
   }
   updateEntry(event) {
@@ -134,7 +152,14 @@ class ToDoList extends React.Component {
     this.setState(prevState => ({
       complete: !prevState.complete
     }));
-    console.log(this.state.complete);
+  }
+  bigDelete(completed) {
+    let filteredTasks = this.state.tasks.filter(function(item) {
+      return item.complete === completed;
+    });
+    this.setState({
+      tasks: filteredTasks
+    });
   }
   render() {
     return (
@@ -155,6 +180,10 @@ class ToDoList extends React.Component {
             Add
           </button>
         </form>
+        <DeleteButton
+          completed={this.state.complete}
+          bigDelete={this.bigDelete}
+        />
         <div>
           {this.state.tasks.map((item, index) =>
             <ToDoItem
@@ -163,12 +192,11 @@ class ToDoList extends React.Component {
               key={item.key}
               task={item.text}
               singleDelete={this.singleDelete}
-              prevState={item.complete}
+              completed={item.complete}
               markItDone={this.markItDone}
             />
           )}
         </div>
-        {/*<DeleteButton/>*/}
       </div>
     );
   }
@@ -179,7 +207,6 @@ class App extends React.Component {
   }
 }
 ReactDOM.render(<App />, home);
-
 
   </script>
 </body>
