@@ -73,7 +73,7 @@ class ToDoItem extends React.Component {
   itsDone() {
     const { markItDone, completed } = this.props;
     markItDone(completed);
-    console.log(completed);
+    console.log(completed);//BUG: Undefined.
   }
   render() {
     return (
@@ -95,9 +95,8 @@ class DeleteButton extends React.Component {
     this.multiDelete = this.multiDelete.bind(this);
   }
   multiDelete() {
-    const { bigDelete, completed } = this.props;
-    console.log(completed);
-    bigDelete(completed);
+    const { bigDelete, key } = this.props;
+    bigDelete(key);
   }
   render() {
     return (
@@ -117,7 +116,8 @@ class ToDoList extends React.Component {
     this.state = {
       tasks: [],
       entry: "",
-      complete: false
+      complete: false,
+      completedTasks: [] //IDEA: Use this as a way to target completed tasks with delete button? Push them into here, then...profit...?
     };
     this.addItem = this.addItem.bind(this);
     this.updateEntry = this.updateEntry.bind(this);
@@ -127,15 +127,17 @@ class ToDoList extends React.Component {
   }
   addItem(event) {
     let taskArray = this.state.tasks;
-    taskArray.push({
-      text: this.state.entry,
-      key: Date.now()
-    });
-    this.setState({
-      tasks: taskArray,
-      entry: ""
-    });
-    console.log(this.state.complete); //TODO: state.complete needs to be lowered; all new items getting same state if one item is marked complete. But how to pass that state to DeleteButton component? This is why I raised it in the first place.
+    if (this.state.entry !== "") {
+      taskArray.push({
+        text: this.state.entry,
+        key: Date.now()
+      });
+      this.setState({
+        tasks: taskArray,
+        entry: ""
+      });
+      console.log(this.state.complete); //BUG: state.complete needs to be lowered; all new items getting same state if one item is marked complete. But how to pass that state to DeleteButton component? This is why I raised it in the first place.
+    }
     event.preventDefault();
   }
   updateEntry(event) {
@@ -181,10 +183,7 @@ class ToDoList extends React.Component {
             Add
           </button>
         </form>
-        <DeleteButton
-          completed={this.state.complete}
-          bigDelete={this.bigDelete}
-        />
+        <DeleteButton bigDelete={this.bigDelete} key={this.state.tasks.key} />
         <div>
           {this.state.tasks.map((item, index) =>
             <ToDoItem
