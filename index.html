@@ -95,8 +95,8 @@ class DeleteButton extends React.Component {
     this.multiDelete = this.multiDelete.bind(this);
   }
   multiDelete() {
-    const { bigDelete, key } = this.props;
-    bigDelete(key);
+    const { bigDelete } = this.props;
+    bigDelete();
   }
   render() {
     return (
@@ -183,7 +183,7 @@ class ToDoList extends React.Component {
             Add
           </button>
         </form>
-        <DeleteButton bigDelete={this.bigDelete} key={this.state.tasks.key} />
+        <DeleteButton bigDelete={this.bigDelete} />
         <div>
           {this.state.tasks.map((item, index) =>
             <ToDoItem
