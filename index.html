@@ -63,6 +63,9 @@ const home = document.querySelector("#app");
 class ToDoItem extends React.Component {
   constructor(props) {
     super(props);
+    this.state = {
+      complete: false
+    }
     this.handleDelete = this.handleDelete.bind(this);
     this.itsDone = this.itsDone.bind(this);
   }
@@ -71,16 +74,18 @@ class ToDoItem extends React.Component {
     singleDelete(index);
   }
   itsDone() {
-    const { markItDone, completed } = this.props;
-    markItDone(completed);
-    console.log(completed);//BUG: Undefined.
+    let status = this.state.complete;
+    this.setState(prevState => ({
+      complete: !prevState.complete
+    }));
+    this.props.markItDone(status);
   }
   render() {
     return (
       <div className="card">
         <input type="checkbox" onChange={this.itsDone} />
         <div className="card-title">
-          <p className={this.props.completed ? "struck" : "unstruck"}>
+          <p className={this.state.complete ? "struck" : "unstruck"} >
             {this.props.task}
           </p>
         </div>
@@ -116,7 +121,7 @@ class ToDoList extends React.Component {
     this.state = {
       tasks: [],
       entry: "",
-      complete: false,
+      itemStatus: null,
       completedTasks: [] //IDEA: Use this as a way to target completed tasks with delete button? Push them into here, then...profit...?
     };
     this.addItem = this.addItem.bind(this);
@@ -130,13 +135,12 @@ class ToDoList extends React.Component {
     if (this.state.entry !== "") {
       taskArray.push({
         text: this.state.entry,
-        key: Date.now()
+        key: Date.now(),
       });
       this.setState({
         tasks: taskArray,
         entry: ""
       });
-      console.log(this.state.complete); //BUG: state.complete needs to be lowered; all new items getting same state if one item is marked complete. But how to pass that state to DeleteButton component? This is why I raised it in the first place.
     }
     event.preventDefault();
   }
@@ -151,12 +155,14 @@ class ToDoList extends React.Component {
       tasks: this.state.tasks
     });
   }
-  markItDone(prevState) {
-    this.setState(prevState => ({
-      complete: !prevState.complete
-    }));
+  markItDone(status) {
+    this.setState({
+      itemStatus: status
+    });
+    console.log(this.state.itemStatus);
   }
   bigDelete(completed) {
+    //TODO: How do I target the individual completion status of a todo item to delete it?
     let filteredTasks = this.state.tasks.filter(function(item) {
       return item.complete === completed;
     });
@@ -192,7 +198,6 @@ class ToDoList extends React.Component {
               key={item.key}
               task={item.text}
               singleDelete={this.singleDelete}
-              completed={item.complete}
               markItDone={this.markItDone}
             />
           )}
