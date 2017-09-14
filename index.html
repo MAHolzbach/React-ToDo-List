@@ -74,11 +74,10 @@ class ToDoItem extends React.Component {
     singleDelete(index);
   }
   itsDone() {
-    let status = this.state.complete;
     this.setState(prevState => ({
       complete: !prevState.complete
     }));
-    this.props.markItDone(status);
+    //Callback to re-render item or whole list which passes the new doneStatus, based on state in this component, which can then be filtered to remove checked items?
   }
   render() {
     return (
@@ -100,6 +99,7 @@ class DeleteButton extends React.Component {
     this.multiDelete = this.multiDelete.bind(this);
   }
   multiDelete() {
+    //Target doneStatus prop...???...profit.
     const { bigDelete } = this.props;
     bigDelete();
   }
@@ -120,14 +120,11 @@ class ToDoList extends React.Component {
     super(props);
     this.state = {
       tasks: [],
-      entry: "",
-      itemStatus: null,
-      completedTasks: [] //IDEA: Use this as a way to target completed tasks with delete button? Push them into here, then...profit...?
+      entry: ""
     };
     this.addItem = this.addItem.bind(this);
     this.updateEntry = this.updateEntry.bind(this);
     this.singleDelete = this.singleDelete.bind(this);
-    this.markItDone = this.markItDone.bind(this);
     this.bigDelete = this.bigDelete.bind(this);
   }
   addItem(event) {
@@ -136,6 +133,7 @@ class ToDoList extends React.Component {
       taskArray.push({
         text: this.state.entry,
         key: Date.now(),
+        doneStatus: false
       });
       this.setState({
         tasks: taskArray,
@@ -155,16 +153,10 @@ class ToDoList extends React.Component {
       tasks: this.state.tasks
     });
   }
-  markItDone(status) {
-    this.setState({
-      itemStatus: status
-    });
-    console.log(this.state.itemStatus);
-  }
-  bigDelete(completed) {
-    //TODO: How do I target the individual completion status of a todo item to delete it?
+  bigDelete() {
+    //TODO: How do I target the individual completion status of a todo item to delete it? Currently deleting everything.
     let filteredTasks = this.state.tasks.filter(function(item) {
-      return item.complete === completed;
+      return item.status === true;
     });
     this.setState({
       tasks: filteredTasks
@@ -197,8 +189,8 @@ class ToDoList extends React.Component {
               index={index}
               key={item.key}
               task={item.text}
+              doneStatus={item.doneStatus}
               singleDelete={this.singleDelete}
-              markItDone={this.markItDone}
             />
           )}
         </div>
