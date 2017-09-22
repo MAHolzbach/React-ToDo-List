@@ -65,7 +65,7 @@ class ToDoItem extends React.Component {
     super(props);
     this.state = {
       complete: false
-    }
+    };
     this.handleDelete = this.handleDelete.bind(this);
     this.itsDone = this.itsDone.bind(this);
   }
@@ -77,6 +77,7 @@ class ToDoItem extends React.Component {
     this.setState(prevState => ({
       complete: !prevState.complete
     }));
+    this.props.updateCompleteList(this.state.complete);
     //Callback to re-render item or whole list which passes the new doneStatus, based on state in this component, which can then be filtered to remove checked items?
   }
   render() {
@@ -84,7 +85,7 @@ class ToDoItem extends React.Component {
       <div className="card">
         <input type="checkbox" onChange={this.itsDone} />
         <div className="card-title">
-          <p className={this.state.complete ? "struck" : "unstruck"} >
+          <p className={this.state.complete ? "struck" : "unstruck"}>
             {this.props.task}
           </p>
         </div>
@@ -120,12 +121,14 @@ class ToDoList extends React.Component {
     super(props);
     this.state = {
       tasks: [],
+      doneTasks: 0,
       entry: ""
     };
     this.addItem = this.addItem.bind(this);
     this.updateEntry = this.updateEntry.bind(this);
     this.singleDelete = this.singleDelete.bind(this);
     this.bigDelete = this.bigDelete.bind(this);
+    this.updateCompleteList = this.updateCompleteList.bind(this);
   }
   addItem(event) {
     let taskArray = this.state.tasks;
@@ -162,9 +165,17 @@ class ToDoList extends React.Component {
       tasks: filteredTasks
     });
   }
+  //BUG: Numbers are all negative. Derp.
+  updateCompleteList(status) {
+    status
+      ? this.setState({ doneTasks: this.state.doneTasks + 1 })
+      : this.setState({ doneTasks: this.state.doneTasks - 1 });
+    console.log(this.state.doneTasks);
+  }
   render() {
     return (
       <div className="todoList">
+        <p className="task-counter">Completed tasks: {this.state.doneTasks}</p>
         <form onSubmit={this.addItem}>
           <input
             type="text"
@@ -191,6 +202,7 @@ class ToDoList extends React.Component {
               task={item.text}
               doneStatus={item.doneStatus}
               singleDelete={this.singleDelete}
+              updateCompleteList={this.updateCompleteList}
             />
           )}
         </div>
