@@ -77,7 +77,7 @@ class ToDoItem extends React.Component {
     this.setState(prevState => ({
       complete: !prevState.complete
     }));
-    this.props.updateCompleteList(this.state.complete);
+    this.props.updateCompleteList(this.props.item);
     //Callback to re-render item or whole list which passes the new doneStatus, based on state in this component, which can then be filtered to remove checked items?
   }
   render() {
@@ -121,7 +121,7 @@ class ToDoList extends React.Component {
     super(props);
     this.state = {
       tasks: [],
-      doneTasks: 0,
+      doneTasks: [],
       entry: ""
     };
     this.addItem = this.addItem.bind(this);
@@ -165,17 +165,18 @@ class ToDoList extends React.Component {
       tasks: filteredTasks
     });
   }
-  //BUG: Numbers are all negative. Derp.
-  updateCompleteList(status) {
-    status
-      ? this.setState({ doneTasks: this.state.doneTasks + 1 })
-      : this.setState({ doneTasks: this.state.doneTasks - 1 });
-    console.log(this.state.doneTasks);
+  //TODO: Need better function to check if item already present. Add if not, delete if so.
+  updateCompleteList(item) {
+    this.state.doneTasks.push(item);
+    this.setState({
+      doneTasks: this.state.doneTasks
+    })
+    console.log(item.key);
   }
   render() {
     return (
       <div className="todoList">
-        <p className="task-counter">Completed tasks: {this.state.doneTasks}</p>
+        <p className="task-counter">Completed tasks: {this.state.doneTasks.length}</p>
         <form onSubmit={this.addItem}>
           <input
             type="text"
