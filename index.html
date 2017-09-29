@@ -58,7 +58,8 @@ html {
 <h1 class='title'>To Do List</h1>
 <div id='app'></div>
 
-<script type="text/babel">const home = document.querySelector("#app");
+<script type="text/babel">
+const home = document.querySelector("#app");
 class ToDoItem extends React.Component {
   constructor(props) {
     super(props);
@@ -74,11 +75,11 @@ class ToDoItem extends React.Component {
   }
   itsDone() {
     const { updateCompleteList, item } = this.props;
+    const doneStatus = this.state.complete;
     this.setState(prevState => ({
       complete: !prevState.complete
     }));
-    updateCompleteList(item.key);
-    //Callback to re-render item or whole list which passes the new doneStatus, based on state in this component, which can then be filtered to remove checked items?
+    updateCompleteList(item);
   }
   render() {
     return (
@@ -100,7 +101,6 @@ class DeleteButton extends React.Component {
     this.multiDelete = this.multiDelete.bind(this);
   }
   multiDelete() {
-    //Target doneStatus prop...???...profit.
     const { bigDelete } = this.props;
     bigDelete();
   }
@@ -157,12 +157,17 @@ class ToDoList extends React.Component {
     });
   }
   bigDelete() {
-    //TODO: How do I target the individual completion status of a todo item to delete it? Currently deleting everything.
-    let filteredTasks = this.state.tasks.filter(function(item) {
-      return item.status === true;
-    });
+    const { tasks, doneTasks } = this.state;
+    const allTasks = [...tasks, ...doneTasks];
+    const scrubber = task => {
+      if (tasks.indexOf(task) === -1 || doneTasks.indexOf(task) === -1) {
+        return task;
+      }
+    };
+    const scrubbedArray = allTasks.filter(scrubber);
     this.setState({
-      tasks: filteredTasks
+      tasks: scrubbedArray,
+      doneTasks: []
     });
   }
   updateCompleteList(item) {
