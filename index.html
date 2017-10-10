@@ -75,10 +75,10 @@ class ToDoItem extends React.Component {
   }
   itsDone() {
     const { updateCompleteList, item } = this.props;
-    const doneStatus = this.state.complete;
-    this.setState(prevState => ({
-      complete: !prevState.complete
-    }));
+    item.doneStatus = !item.doneStatus;
+    this.setState({
+      complete: !this.state.complete
+    });
     updateCompleteList(item);
   }
   render() {
@@ -150,11 +150,20 @@ class ToDoList extends React.Component {
       entry: event.target.value
     });
   }
+  //BUG: SingleDelete is clearing doneTasks state; "doneTasks" state is empty, and remaing checked items cannot be bigDeleted.
   singleDelete(index) {
+    const doneTasksArray = [...this.state.doneTasks];
     this.state.tasks.splice(index, 1);
+    const scrubber = task => {
+      if (task.doneStatus === false) {
+        return task;
+      }
+    }
+    const scrubbedArray = doneTasksArray.filter(scrubber);
     this.setState({
-      tasks: this.state.tasks
-    });
+      tasks: this.state.tasks,
+      doneTasks: scrubbedArray
+    }, console.log(scrubbedArray));
   }
   bigDelete() {
     const { tasks, doneTasks } = this.state;
@@ -168,18 +177,18 @@ class ToDoList extends React.Component {
     this.setState({
       tasks: scrubbedArray,
       doneTasks: []
-    });
+    }, console.log(this.state.doneTasks));
   }
   updateCompleteList(item) {
     let updatedDoneTasks = this.state.doneTasks;
-    if (updatedDoneTasks.indexOf(item) === -1) {
+    if (item.doneStatus === true) {
       updatedDoneTasks.push(item);
     } else {
       updatedDoneTasks = updatedDoneTasks.filter(task => task !== item);
     }
     this.setState({
       doneTasks: updatedDoneTasks
-    });
+    }, console.log(updatedDoneTasks));
   }
   render() {
     return (
@@ -202,8 +211,8 @@ class ToDoList extends React.Component {
           >
             Add
           </button>
+          <DeleteButton bigDelete={this.bigDelete} />
         </form>
-        <DeleteButton bigDelete={this.bigDelete} />
         <div>
           {this.state.tasks.map((item, index) => (
             <ToDoItem
