@@ -138,13 +138,10 @@ class ToDoList extends React.Component {
   //BUG: SingleDelete is clearing doneTasks state; "doneTasks" state is empty, and remaing checked items cannot be bigDeleted.
   singleDelete(index) {
     const doneTasksArray = [...this.state.doneTasks];
+    console.log(doneTasksArray);
     this.state.tasks.splice(index, 1);
-    const scrubber = task => {
-      if (task.doneStatus === false) {
-        return task;
-      }
-    };
-    const scrubbedArray = doneTasksArray.filter(scrubber);
+    const scrubbedArray = doneTasksArray.filter(task => task.doneStatus === true);
+    console.log(scrubbedArray);
     this.setState(
       {
         tasks: this.state.tasks,
